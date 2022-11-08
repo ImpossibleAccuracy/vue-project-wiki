@@ -1,85 +1,116 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import store from "./store";
+import { RouterLink, RouterView } from "vue-router";
+
+const scientists = store.state.scientists;
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <header class="header">
+    <div class="logo">
+      <router-link :to="{ name: 'home' }" class="logo-text">logo</router-link>
     </div>
+
+    <ul class="menu menu-header">
+      <li class="menu-item" v-for="s of scientists">
+        <span class="menu-item-title" v-text="s.name"></span>
+        <ul class="submenu">
+          <li class="menu-item sub-menu-item">
+            <router-link :to="{ name: 'wiki', params: { wikiId: s.id } }" class="link">
+              Вики
+            </router-link>
+          </li>
+
+          <li class="menu-item sub-menu-item" v-for="f of s.formulas">
+            <router-link :to="{ name: 'formula', params: { wikiId: s.id, formulaId: f.id } }" class="link">
+              {{ f.title }}
+            </router-link>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </header>
 
   <RouterView />
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+<style lang="scss" scoped>
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 64px;
+  box-shadow: var(--elevation);
+  background-color: var(--primary);
+  transition: .1s ease-in-out top;
 
   .logo {
-    margin: 0 2rem 0 0;
+    width: 100%;
+
+    .logo-text {
+      cursor: pointer;
+      user-select: none;
+      color: inherit;
+      font-size: 2rem;
+      font-style: italic;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
   }
 
-  header .wrapper {
+  .menu {
+    width: 100%;
     display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+    padding: 8px 0;
+
+    .menu-item {
+      cursor: pointer;
+      position: relative;
+      height: 100%;
+      padding: 8px 24px;
+      white-space: nowrap;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+
+      &:hover {
+        background-color: var(--color-background-soft);
+
+        .submenu {
+          display: block;
+        }
+      }
+    }
   }
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
+  .submenu {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    display: none;
+    min-width: 100%;
+    overflow: hidden;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: var(--color-background-soft);
 
-    padding: 1rem 0;
-    margin-top: 1rem;
+    .sub-menu-item {
+      padding: 0;
+
+      &:hover {
+        background-color: var(--color-background-mute);
+      }
+
+      .link {
+        display: block;
+        color: inherit;
+        padding: 8px 24px;
+        text-decoration: none;
+      }
+    }
   }
 }
 </style>
